@@ -4,42 +4,25 @@ class Pokes_model extends CI_Model {
 	public function __construct(){
 		$this->load->helper('security');
 	}
-	public function register($post){
-		$password = do_hash($post['password']);
-		$query = "insert into users (name, alias, email, password, dob, created_at, modified_at) values(?,?,?,?,?,NOW(),NOW())";
-		$values =
-			 ["{$post['name']}","{$post['alias']}","{$post['email']}",$password,"{$post['dob']}"];
-		$this->db->query($query, $values);
-		return true;
-	}
-	public function index_users(){
-		$query = "SELECT id, name, alias, email FROM users";
+	public function index_pokes(){
+		$query =
+		 	"SELECT pokes.id as poke_id, users.id as id, name, alias, email, SUM(count) as pokes_recieved from pokes
+			right join users on users.id = pokes.pokee_id group by name";
 		return $this->db->query($query)->result_array();
 	}
-	public function show_by_email($email){
-		$query =
-			"SELECT * FROM users WHERE email = ?";
-		$values = [$email];
-		return $this->db->query($query,$values)->row_array();
-	}
-	public function add($info){
-		$query =
-			 "INSERT INTO users (name, alias, email, password, dob created_at, modified_at)  VALUES (?,?,?,?,?,NOW(),NOW())";
-		return $this->db->query($query,$info);
-	}
-	public function show_poke($pokee,$poker){
+	public function show_poke($poker_id,$pokee_id){//only used by add_poke function
 		$query =
 			"SELECT count  FROM pokes
 			WHERE pokee_id = ? AND poker_id = ?;";
-		$values = [$pokee, $poker];
+		$values = [$pokee_id, $poker_id];
 		return $this->db->query($query,$values)->row_array();
 	}
-	public function add_poke($pokee,$poker){
-		$pokes = $this->show_poke($pokee,$poker);
+	public function add_poke($pokee_id,$poker_id){
+		$pokes = $this->show_poke($poker_id,$pokee_id);
 		if ($pokes==null) {
 			$query =
 				"INSERT into pokes (poker_id, pokee_id, count, created_at, modified_at) values(?,?,?,NOW(),NOW());";
-			$values = [$poker,$pokee,1];
+			$values = [$poker_id,$pokee_id,1];
 			$this->db->query($query,$values);
 		}
 		else {
@@ -47,11 +30,11 @@ class Pokes_model extends CI_Model {
 			$count++;
 			$query =
 				"UPDATE pokes SET count=? WHERE pokee_id =? AND poker_id=?;";
-			$values = [$count,$pokee,$poker];
+			$values = [$count,$pokee_id,$poker_id];
 			$this->db->query($query,$values);
 		}
 	}
-	public function show_pokes_by_id($pokee){
+	public function show_pokes_by_id($pokee){//used to display who has poked signed-in person
 		$query =
 		 	"SELECT poker_id, r.name as poker_name, pokee_id, e.name as pokee_name, count from pokes
 			left join users r on r.id = pokes.poker_id
@@ -59,12 +42,5 @@ class Pokes_model extends CI_Model {
 			WHERE pokee_id =?";
 		$values = [$pokee];
 		return $this->db->query($query,$values)->result_array();
-	}
-	public function show_poke_count_by_id($pokee){
-		$query =
-			"SELECT SUM(count) as pokes_recieved, pokee_id FROM pokes
-			WHERE pokee_id = ?;";
-			$values = [$pokee];
-			return $this->db->query($query,$values)->row_array();
 	}
 }

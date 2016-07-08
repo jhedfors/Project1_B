@@ -16,7 +16,7 @@
    <div class="row">
      <div class="col s6">
        <h4>Register</h4>
-       <form class="" action="/pokes/register" method="post">
+       <form class="" action="/users/register" method="post">
          <label for="name">Name:</label><input type="text" name="name" value="">
          <label for="alias">Alias:</label><input type="text" name="alias" value="">
          <label for="email">Email:</label><input type="email" name="email" value="">
@@ -31,7 +31,7 @@
      </div>
      <div class="col s6">
        <h4>Login</h4>
-       <form class="" action="/pokes/login" method="post">
+       <form class="" action="/users/login" method="post">
          <label for="username">Email:</label><input type="text" name="email" value="">
          <label for="password">Password:</label><input type="password" name="password" value="">
          <input type="submit"value="Login">

@@ -1,10 +1,12 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-$route['default_controller'] = "/pokes";
-$route['main'] = "/pokes/login_reg_view";
+$route['default_controller'] = "/users";
+$route['main'] = "/users/login_reg_view";
+$route['logout'] = "/users/logout";
 $route['pokes'] = "/pokes/pokes_view";
+$route['index_json'] = "/pokes/index_json";
+$route['poke_json'] = "/pokes/poke_json";
 $route['poke/(:num)/(:num)'] = "pokes/poke/$1/$2";
-$route['logout'] = "/pokes/logout";
 $route['404_override'] = '';
 
 
